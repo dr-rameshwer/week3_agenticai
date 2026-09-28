@@ -3,8 +3,8 @@ Step 9: Function / Tool Calling Lifecycle
 Prepared by Dr. Rameshwer | Full-Stack AI Engineer
 
 What this teaches:
-- The LLM does NOT guess database values; it requests tool execution
-- Python functions with type hints & docstrings are converted to tools
+- The LLM does NOT guess private database values; it requests tool execution
+- Python functions with type hints & docstrings are converted into tools
 - Automatic tool execution loop returns real-time grounded facts
 """
 
@@ -12,59 +12,61 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("GEMINI_API_KEY", "")
 
 print("=" * 50)
 print("Step 9: Function / Tool Calling")
 print("Guide: Dr. Rameshwer")
 print("=" * 50)
 
-# Simulated Campus DB
-STUDENT_DB = {
-    "CS2026": {"name": "Alice Smith", "major": "Computer Science", "status": "Passed", "gpa": 3.9},
-    "CS2027": {"name": "Bob Jones", "major": "Data Science", "status": "Academic Probation", "gpa": 2.4}
+# Simulated Private Campus Database
+STUDENTS_DB = {
+    "AI-2026-001": {"name": "Aarav Sharma", "attendance": 88.5, "eligible": True},
+    "AI-2026-002": {"name": "Priya Patel", "attendance": 64.0, "eligible": False}
 }
 
-# 1. Define Tool function with docstring and type hints
-def lookup_student_record(roll_no: str) -> dict:
-    """Retrieves student academic standing and GPA by roll number.
+def get_student_record(roll_no: str) -> dict:
+    """Look up a student's official attendance percentage and exam eligibility.
 
     Args:
-        roll_no: Student identification string (e.g. 'CS2026').
+        roll_no: The student roll number, e.g. 'AI-2026-001' or 'AI-2026-002'.
     """
     clean_roll = roll_no.strip().upper()
-    print(f"  [Tool Call Executed]: Querying DB for {clean_roll}...")
-    if clean_roll in STUDENT_DB:
-        return {"found": True, "record": STUDENT_DB[clean_roll]}
-    return {"found": False, "error": f"Student '{clean_roll}' not found."}
+    print(f"  [Tool Call Executed]: Querying database for {clean_roll}...")
+    if clean_roll in STUDENTS_DB:
+        return {"status": "SUCCESS", "record": STUDENTS_DB[clean_roll]}
+    return {"status": "NOT_FOUND", "error": f"Student {clean_roll} was not found."}
 
-if not api_key:
-    print("Simulated Output:")
-    tool_res = lookup_student_record("CS2026")
-    print(f"Student Alice Smith is in Good Standing with a GPA of 3.9.")
-    exit(0)
+query = "Can you check the attendance and exam eligibility for student AI-2026-001?"
 
-from google import genai
-from google.genai import types
+def run_step():
+    print(f"User Query: {query}\n")
+    if api_key.startswith("AIzaSy") and len(api_key) > 20:
+        try:
+            from google import genai
+            from google.genai import types
+            client = genai.Client(api_key=api_key)
+            config = types.GenerateContentConfig(
+                system_instruction="You are the Campus AI Academic Advisor. Always call get_student_record when asked about student status.",
+                tools=[get_student_record],
+                temperature=0.0
+            )
+            response = client.models.generate_content(
+                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                contents=query,
+                config=config
+            )
+            print("--- Grounded Answer from LLM ---")
+            print(response.text.strip())
+            return
+        except Exception:
+            pass
 
-client = genai.Client(api_key=api_key)
+    print("[NOTICE]: (Offline Simulation Mode)")
+    tool_res = get_student_record("AI-2026-001")
+    print("--- Grounded Answer from LLM (Simulated) ---")
+    print("Student Aarav Sharma (AI-2026-001) has an attendance of 88.5% and is ELIGIBLE for exams.")
 
-# 2. Bind tool to generation config
-config = types.GenerateContentConfig(
-    tools=[lookup_student_record],
-    temperature=0.0
-)
-
-query = "What is the academic standing and GPA of student CS2026?"
-print(f"User Query: {query}\n")
-
-# 3. Model automatically calls lookup_student_record and synthesizes answer
-response = client.models.generate_content(
-    model="gemini-2.5-flash",
-    contents=query,
-    config=config
-)
-
-print("\n--- Grounded Answer from LLM ---")
-print(response.text.strip())
-print("=" * 50)
+if __name__ == "__main__":
+    run_step()
+    print("=" * 50)

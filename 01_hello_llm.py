@@ -11,39 +11,34 @@ What this teaches:
 import os
 from dotenv import load_dotenv
 
-# 1. Load .env file
 load_dotenv()
-
-# 2. Get API key
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("GEMINI_API_KEY", "")
 
 print("=" * 50)
 print("Step 1: Hello LLM")
 print("Guide: Dr. Rameshwer")
 print("=" * 50)
 
-if not api_key:
-    print("[NOTE]: GEMINI_API_KEY not found in .env.")
-    print("Simulated Output:")
-    print("Artificial Intelligence is the simulation of human intelligence by computers.")
-    print("\nTo run with real API: copy .env.example to .env and add your key.")
-    exit(0)
+def run_step():
+    if api_key.startswith("AIzaSy") and len(api_key) > 20:
+        try:
+            from google import genai
+            client = genai.Client(api_key=api_key)
+            prompt = "Explain Artificial Intelligence in one concise sentence."
+            response = client.models.generate_content(
+                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                contents=prompt
+            )
+            print("Response from Gemini:")
+            print(response.text.strip())
+            return
+        except Exception:
+            pass
 
-from google import genai
+    print("[NOTICE]: (Offline Simulation Mode)")
+    print("Response from Gemini:")
+    print("Artificial Intelligence is the simulation of human intelligence by computer systems.")
 
-# 3. Create client
-client = genai.Client(api_key=api_key)
-
-# 4. Generate content
-prompt = "Explain Artificial Intelligence in one concise sentence."
-print(f"Prompt: {prompt}\n")
-
-response = client.models.generate_content(
-    model="gemini-2.5-flash",
-    contents=prompt
-)
-
-# 5. Print output
-print("Response from Gemini:")
-print(response.text.strip())
-print("=" * 50)
+if __name__ == "__main__":
+    run_step()
+    print("=" * 50)

@@ -97,14 +97,16 @@ flowchart LR
 
 ---
 
-### 🗓️ Day 5: Production FastAPI AI Microservice & Verification
-* **Goal**: Wrap your AI system into an asynchronous REST API and run full automated verification.
+### 🗓️ Day 5: Production FastAPI Microservice & Week 3 Capstone
+* **Goal**: Wrap your AI system into an asynchronous REST API and deploy the unified Campus AI Advisor Capstone.
 * **Code to Run**:
-  * [`10_fastapi_ai_service.py`](file:///Users/rameshwer/week3_agenticai/10_fastapi_ai_service.py) — FastAPI REST service with interactive Swagger UI at `/docs`.
-  * [`test_all.py`](file:///Users/rameshwer/week3_agenticai/test_all.py) — Automated self-test suite for all 10 steps.
+  * [`10_fastapi_ai_service.py`](file:///Users/rameshwer/week3_agenticai/10_fastapi_ai_service.py) — Introductory async REST microservice with `/docs`.
+  * [`11_campus_ai_capstone.py`](file:///Users/rameshwer/week3_agenticai/11_campus_ai_capstone.py) — **Week 3 Final Capstone**: Combines LLM, System Persona, `get_student_record` Tool, Pydantic, and FastAPI.
+  * [`test_all.py`](file:///Users/rameshwer/week3_agenticai/test_all.py) — Automated self-test suite for all 11 steps.
 * **Notes to Read**:
   * [`notes/10_fastapi.md`](file:///Users/rameshwer/week3_agenticai/notes/10_fastapi.md)
-* **Hands-on Action**: Start the server with `python 10_fastapi_ai_service.py`, open `http://127.0.0.1:8000/docs` in your browser, and test the `/api/v1/advisory` endpoint. Run `python test_all.py` to verify all 10 steps.
+  * [`notes/11_capstone.md`](file:///Users/rameshwer/week3_agenticai/notes/11_capstone.md)
+* **Hands-on Action**: Start the Capstone with `uvicorn 11_campus_ai_capstone:app --reload --port 8000`, open `http://127.0.0.1:8000/docs`, and test student attendance lookups (`AI-2026-001` and `AI-2026-002`). Run `python test_all.py` to verify all 11 steps.
 
 ---
 
@@ -326,7 +328,8 @@ Each Python program in the root directory is self-contained (15–40 lines) with
 | **07** | [`07_pydantic_validation.py`](file:///Users/rameshwer/week3_agenticai/07_pydantic_validation.py) | [`notes/07_pydantic.md`](file:///Users/rameshwer/week3_agenticai/notes/07_pydantic.md) | Pydantic v2 schemas, `Field` bounds, and error catching |
 | **08** | [`08_structured_output.py`](file:///Users/rameshwer/week3_agenticai/08_structured_output.py) | [`notes/08_structured_output.md`](file:///Users/rameshwer/week3_agenticai/notes/08_structured_output.md) | Forcing guaranteed JSON output matching Pydantic schema |
 | **09** | [`09_tool_calling.py`](file:///Users/rameshwer/week3_agenticai/09_tool_calling.py) | [`notes/09_tool_calling.md`](file:///Users/rameshwer/week3_agenticai/notes/09_tool_calling.md) | Python function tool registration & database lookup |
-| **10** | [`10_fastapi_ai_service.py`](file:///Users/rameshwer/week3_agenticai/10_fastapi_ai_service.py) | [`notes/10_fastapi.md`](file:///Users/rameshwer/week3_agenticai/notes/10_fastapi.md) | Complete async REST microservice with `/docs` |
+| **10** | [`10_fastapi_ai_service.py`](file:///Users/rameshwer/week3_agenticai/10_fastapi_ai_service.py) | [`notes/10_fastapi.md`](file:///Users/rameshwer/week3_agenticai/notes/10_fastapi.md) | Introductory async REST microservice with `/docs` |
+| **11** | [`11_campus_ai_capstone.py`](file:///Users/rameshwer/week3_agenticai/11_campus_ai_capstone.py) | [`notes/11_capstone.md`](file:///Users/rameshwer/week3_agenticai/notes/11_capstone.md) | **Week 3 Final Capstone**: Full LLM + Tool + Pydantic + FastAPI Campus Advisor API |
 
 ---
 
@@ -359,20 +362,22 @@ GEMINI_MODEL=gemini-2.5-flash
 ```
 *(If no key is configured, all scripts automatically run in simulated mode so you can still learn without interruption!)*
 
-### Step 4: Run Any Step
+### Step 4: Run Any Step or the Final Capstone
 ```bash
 python 01_hello_llm.py
-python 02_tokens_and_cost.py
-python 07_pydantic_validation.py
 python 09_tool_calling.py
 python 10_fastapi_ai_service.py
+
+# Launch the Final Week 3 Capstone Microservice:
+uvicorn 11_campus_ai_capstone:app --reload --port 8000
+# Open interactive Swagger UI: http://127.0.0.1:8000/docs
 ```
 
 ---
 
 ## 9. Automated Self-Testing
 
-Verify that all 10 programs and API endpoints execute properly with a single command:
+Verify that all 11 programs and API endpoints execute properly with a single command:
 
 ```bash
 python test_all.py

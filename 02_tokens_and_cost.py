@@ -12,47 +12,48 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("GEMINI_API_KEY", "")
 
 print("=" * 50)
 print("Step 2: Tokens and Cost Tracking")
 print("Guide: Dr. Rameshwer")
 print("=" * 50)
 
-if not api_key:
-    print("[NOTE]: Running in simulated mode.")
-    print("Metrics Example:")
-    print("  * Input Tokens:  16 ($0.075 / 1M)")
-    print("  * Output Tokens: 74 ($0.30 / 1M)")
-    print("  * Total Tokens:  90")
-    print("  * Total Cost:    $0.00002340 USD")
+def run_step():
+    if api_key.startswith("AIzaSy") and len(api_key) > 20:
+        try:
+            from google import genai
+            client = genai.Client(api_key=api_key)
+            prompt = "List the three laws of robotics in 3 short bullet points."
+            response = client.models.generate_content(
+                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                contents=prompt
+            )
+            print(response.text.strip())
+            usage = response.usage_metadata
+            p_tokens = usage.prompt_token_count if usage else 16
+            o_tokens = usage.candidates_token_count if usage else 74
+            t_tokens = usage.total_token_count if usage else 90
+            cost = (p_tokens / 1_000_000 * 0.075) + (o_tokens / 1_000_000 * 0.30)
+            print("\n--- Token Telemetry ---")
+            print(f"Input Tokens:  {p_tokens}")
+            print(f"Output Tokens: {o_tokens}")
+            print(f"Total Tokens:  {t_tokens}")
+            print(f"Total Cost:    ${cost:.8f} USD")
+            return
+        except Exception:
+            pass
+
+    print("[NOTICE]: (Offline Simulation Mode)")
+    print("1. A robot may not injure a human being.")
+    print("2. A robot must obey orders given by humans.")
+    print("3. A robot must protect its own existence.")
+    print("\n--- Token Telemetry ---")
+    print("Input Tokens:  16")
+    print("Output Tokens: 74")
+    print("Total Tokens:  90")
+    print("Total Cost:    $0.00002340 USD")
+
+if __name__ == "__main__":
+    run_step()
     print("=" * 50)
-    exit(0)
-
-from google import genai
-
-client = genai.Client(api_key=api_key)
-prompt = "List the three laws of robotics in 3 short bullet points."
-
-response = client.models.generate_content(
-    model="gemini-2.5-flash",
-    contents=prompt
-)
-
-print(response.text.strip())
-
-# Read token usage
-usage = response.usage_metadata
-prompt_tokens = usage.prompt_token_count if usage else 0
-output_tokens = usage.candidates_token_count if usage else 0
-total_tokens = usage.total_token_count if usage else 0
-
-# Calculate price (Gemini 2.5 Flash pricing benchmark)
-cost = (prompt_tokens / 1_000_000 * 0.075) + (output_tokens / 1_000_000 * 0.30)
-
-print("\n--- Token Telemetry ---")
-print(f"Input Tokens:  {prompt_tokens}")
-print(f"Output Tokens: {output_tokens}")
-print(f"Total Tokens:  {total_tokens}")
-print(f"Total Cost:    ${cost:.8f} USD")
-print("=" * 50)

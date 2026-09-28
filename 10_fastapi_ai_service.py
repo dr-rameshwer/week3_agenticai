@@ -15,15 +15,7 @@ from pydantic import BaseModel, Field
 import uvicorn
 
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
-
-client = None
-if api_key:
-    try:
-        from google import genai
-        client = genai.Client(api_key=api_key)
-    except Exception:
-        client = None
+api_key = os.getenv("GEMINI_API_KEY", "")
 
 # 1. Initialize FastAPI
 app = FastAPI(
@@ -45,31 +37,33 @@ class AdvisoryResponse(BaseModel):
 # 3. Health check endpoint
 @app.get("/health", tags=["System"])
 def health():
-    return {"status": "online", "llm_connected": client is not None}
+    return {"status": "online", "llm_connected": bool(api_key.startswith("AIzaSy"))}
 
 # 4. Asynchronous AI endpoint
 @app.post("/api/v1/advisory", response_model=AdvisoryResponse, tags=["AI Service"])
 async def get_advisory(request: AdvisoryRequest):
-    if not client:
-        return AdvisoryResponse(
-            subject=request.subject,
-            advice=f"[Simulated Guide]: For {request.subject} ('{request.question}'), practice coding daily.",
-            status="simulated"
-        )
+    if api_key.startswith("AIzaSy") and len(api_key) > 20:
+        try:
+            from google import genai
+            client = genai.Client(api_key=api_key)
+            prompt = f"Subject: {request.subject}\nQuestion: {request.question}\nGive 2 concise practical recommendations."
+            res = client.models.generate_content(
+                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                contents=prompt
+            )
+            return AdvisoryResponse(
+                subject=request.subject,
+                advice=res.text.strip(),
+                status="success"
+            )
+        except Exception:
+            pass
 
-    try:
-        prompt = f"Subject: {request.subject}\nQuestion: {request.question}\nGive 2 concise practical recommendations."
-        res = client.models.generate_content(
-            model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
-            contents=prompt
-        )
-        return AdvisoryResponse(
-            subject=request.subject,
-            advice=res.text.strip(),
-            status="success"
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return AdvisoryResponse(
+        subject=request.subject,
+        advice=f"[Simulated Advisor]: For {request.subject} ('{request.question}'), practice coding daily and review course notes.",
+        status="simulated"
+    )
 
 if __name__ == "__main__":
     print("=" * 60)

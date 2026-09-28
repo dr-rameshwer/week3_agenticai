@@ -8,29 +8,38 @@
 The LLM does **not** execute Python code or connect to your database directly.
 Instead:
 1. You register Python functions with docstrings & type hints.
-2. The user asks a question requiring live or private data.
-3. The LLM requests tool execution with structured arguments.
-4. Your application runs the function against your database.
+2. The user asks a question requiring private campus data.
+3. The LLM requests tool execution with structured arguments (`roll_no='AI-2026-001'`).
+4. Your application runs the function against `STUDENTS_DB`.
 5. You return the result to the LLM.
 6. The LLM generates the final grounded answer.
 
 ## 2. Key Code
 ```python
-# 1. Define function with docstring
-def lookup_student_record(roll_no: str) -> dict:
-    """Retrieves student GPA and academic standing by roll number."""
-    return STUDENT_DB.get(roll_no.upper(), {"found": False})
+# 1. Private Campus Database
+STUDENTS_DB = {
+    "AI-2026-001": {"name": "Aarav Sharma", "attendance": 88.5, "eligible": True},
+    "AI-2026-002": {"name": "Priya Patel", "attendance": 64.0, "eligible": False}
+}
 
-# 2. Register tool
+# 2. Define function with docstring (Gemini reads this!)
+def get_student_record(roll_no: str) -> dict:
+    """Look up a student's official attendance percentage and exam eligibility."""
+    clean_roll = roll_no.strip().upper()
+    if clean_roll in STUDENTS_DB:
+        return {"status": "SUCCESS", "record": STUDENTS_DB[clean_roll]}
+    return {"status": "NOT_FOUND", "error": f"Student {clean_roll} was not found."}
+
+# 3. Register tool in config
 config = types.GenerateContentConfig(
-    tools=[lookup_student_record],
+    tools=[get_student_record],
     temperature=0.0
 )
 
-# 3. Automatic tool execution loop
+# 4. Automatic tool execution loop
 res = client.models.generate_content(
     model="gemini-2.5-flash",
-    contents="What is the GPA of student CS2026?",
+    contents="Is student AI-2026-001 eligible for exams?",
     config=config
 )
 ```
