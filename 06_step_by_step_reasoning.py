@@ -27,7 +27,7 @@ def run_step():
             problem = "Courses: Data Structures: 4 credits (4.0), Database: 3 credits (3.0), Math: 3 credits (4.0), Writing: 2 credits (2.0)."
             prompt = f"Solve step by step:\n1. STEP-BY-STEP CALCULATION\n2. VERIFICATION\n3. FINAL ANSWER: GPA = X.XX\nProblem: {problem}"
             response = client.models.generate_content(
-                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
                 contents=prompt,
                 config=types.GenerateContentConfig(temperature=0.0)
             )

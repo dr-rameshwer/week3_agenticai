@@ -87,7 +87,7 @@ async def chat_with_advisor(query: ChatQuery):
                 from google import genai
                 from google.genai import types
                 client = genai.Client(api_key=api_key)
-                model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+                model_name = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
 
                 config = types.GenerateContentConfig(
                     system_instruction=SYSTEM_PROMPT,
@@ -104,7 +104,7 @@ async def chat_with_advisor(query: ChatQuery):
                 import google.generativeai as genai
                 genai.configure(api_key=api_key)
                 model = genai.GenerativeModel(
-                    model_name="gemini-1.5-flash",
+                    model_name=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
                     system_instruction=SYSTEM_PROMPT,
                     tools=[get_student_record]
                 )

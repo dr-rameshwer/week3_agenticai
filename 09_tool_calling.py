@@ -52,7 +52,7 @@ def run_step():
                 temperature=0.0
             )
             response = client.models.generate_content(
-                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
                 contents=query,
                 config=config
             )

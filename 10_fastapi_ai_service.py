@@ -48,7 +48,7 @@ async def get_advisory(request: AdvisoryRequest):
             client = genai.Client(api_key=api_key)
             prompt = f"Subject: {request.subject}\nQuestion: {request.question}\nGive 2 concise practical recommendations."
             res = client.models.generate_content(
-                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
                 contents=prompt
             )
             return AdvisoryResponse(

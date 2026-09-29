@@ -26,7 +26,7 @@ def run_step():
             client = genai.Client(api_key=api_key)
             system_prompt = "You are a friendly programming mentor. Explain in 2 sentences with an analogy. End with 1-line Python code."
             response = client.models.generate_content(
-                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
                 contents="What is a Python dictionary?",
                 config=types.GenerateContentConfig(system_instruction=system_prompt, temperature=0.2)
             )

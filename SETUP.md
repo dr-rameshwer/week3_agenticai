@@ -72,7 +72,7 @@ cp .env.example .env
 Open `.env` in your text editor and insert your key:
 ```env
 GEMINI_API_KEY=AIzaSyD-YourActualKeyHere123456789
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.6-flash
 ```
 
 > [!CAUTION]

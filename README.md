@@ -358,7 +358,7 @@ cp .env.example .env
 Open `.env` and paste your free key from [Google AI Studio](https://aistudio.google.com/):
 ```env
 GEMINI_API_KEY=your_actual_key_here
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.6-flash
 ```
 *(If no key is configured, all scripts automatically run in simulated mode so you can still learn without interruption!)*
 

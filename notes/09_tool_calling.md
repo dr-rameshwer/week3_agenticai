@@ -38,7 +38,7 @@ config = types.GenerateContentConfig(
 
 # 4. Automatic tool execution loop
 res = client.models.generate_content(
-    model="gemini-2.5-flash",
+    model="gemini-3.6-flash",
     contents="Is student AI-2026-001 eligible for exams?",
     config=config
 )

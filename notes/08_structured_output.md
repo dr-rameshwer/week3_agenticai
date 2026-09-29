@@ -25,7 +25,7 @@ config = types.GenerateContentConfig(
 )
 
 res = client.models.generate_content(
-    model="gemini-2.5-flash",
+    model="gemini-3.6-flash",
     contents="Analyze: 'CS301 was amazing! Loved FastAPI.'",
     config=config
 )

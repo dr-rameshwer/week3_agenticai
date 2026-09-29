@@ -26,7 +26,7 @@ def run_step():
             client = genai.Client(api_key=api_key)
             prompt = "List the three laws of robotics in 3 short bullet points."
             response = client.models.generate_content(
-                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
                 contents=prompt
             )
             print(response.text.strip())

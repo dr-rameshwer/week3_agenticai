@@ -41,7 +41,7 @@ SEVERITY: High
 Ticket: The server room power generator is overheating and alarms are sounding.
 CATEGORY:"""
             response = client.models.generate_content(
-                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
                 contents=prompt,
                 config=types.GenerateContentConfig(temperature=0.0, max_output_tokens=50)
             )

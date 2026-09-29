@@ -26,7 +26,7 @@ def run_step():
             client = genai.Client(api_key=api_key)
             prompt = "Explain Artificial Intelligence in one concise sentence."
             response = client.models.generate_content(
-                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
                 contents=prompt
             )
             print("Response from Gemini:")

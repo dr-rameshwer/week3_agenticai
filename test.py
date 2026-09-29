@@ -50,7 +50,9 @@ SYSTEM_PROMPT = (
 # Line 8: Private student records that the LLM cannot see directly
 STUDENTS_DB = {
     "AI-2026-001": {"name": "Aarav Sharma", "attendance": 88.5, "eligible": True},
-    "AI-2026-002": {"name": "Priya Patel", "attendance": 64.0, "eligible": False}
+    "AI-2026-002": {"name": "Priya Patel", "attendance": 64.0, "eligible": False},
+    "AI-2026-003": {"name": "Ram", "attendance": 87.0, "eligible": True}
+
 }
 
 # Line 9: Define the Python Tool function (Gemini reads the docstring to understand what it does!)
@@ -113,7 +115,7 @@ async def chat_with_advisor(query: ChatQuery):
             
             # Line 23: Initialize Gemini model with System Persona and our Python Tool
             model = genai.GenerativeModel(
-                model_name="gemini-3.6-flash",
+                model_name=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
                 system_instruction=SYSTEM_PROMPT,
                 tools=[get_student_record]
             )
@@ -151,8 +153,8 @@ if __name__ == "__main__":
     import uvicorn
     
     # Line 32: Print helpful startup instructions to the terminal
-    print("🚀 Starting Campus AI Advisor API...")
-    print("📖 Interactive Swagger Documentation: http://127.0.0.1:8000/docs\n")
+    print("Starting Campus AI Advisor API...")
+    print("Interactive Swagger Documentation: http://127.0.0.1:8000/docs\n")
     
     # Line 33: Start the server on host 127.0.0.1 and port 8000
     uvicorn.run(app, host="127.0.0.1", port=8000)

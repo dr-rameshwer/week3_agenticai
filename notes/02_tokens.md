@@ -13,7 +13,7 @@ LLMs do not process raw words or characters directly; they process **Tokens** (~
 ## 2. Key Code
 ```python
 response = client.models.generate_content(
-    model="gemini-2.5-flash",
+    model="gemini-3.6-flash",
     contents="List 3 laws of robotics."
 )
 

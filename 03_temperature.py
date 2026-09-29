@@ -26,12 +26,12 @@ def run_step():
             client = genai.Client(api_key=api_key)
             prompt = "Suggest 2 names for a student AI robotics club."
             res_low = client.models.generate_content(
-                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
                 contents=prompt,
                 config=types.GenerateContentConfig(temperature=0.0, max_output_tokens=60)
             )
             res_high = client.models.generate_content(
-                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
                 contents=prompt,
                 config=types.GenerateContentConfig(temperature=1.0, max_output_tokens=60)
             )
